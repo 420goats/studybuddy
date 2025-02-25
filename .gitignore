@@ -1,0 +1,49 @@
+# Node dependencies
+node_modules/
+npm-debug.log*
+yarn-error.log
+
+# Expo
+.expo/
+.expo-shared/
+expo-env.d.ts
+
+# Logs
+*.log
+*.log.*
+
+# OS-generated files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
+
+# Build artifacts
+dist/
+build/
+web-build/
+
+# Metro bundler cache
+metro-cache/
+.metro-health-check*
+
+# TypeScript
+*.tsbuildinfo
+
+# Babel cache
+.babelrc.js
+
+# Misc
+.env
+.env.local
+.env.*.local
+
+# Native
+*.orig.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
