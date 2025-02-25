@@ -6,6 +6,7 @@ yarn-error.log
 # Expo
 .expo/
 .expo-shared/
+expo-env.d.ts
 
 # Logs
 *.log
@@ -22,9 +23,11 @@ Thumbs.db
 # Build artifacts
 dist/
 build/
+web-build/
 
 # Metro bundler cache
 metro-cache/
+.metro-health-check*
 
 # TypeScript
 *.tsbuildinfo
@@ -36,3 +39,11 @@ metro-cache/
 .env
 .env.local
 .env.*.local
+
+# Native
+*.orig.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
