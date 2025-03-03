@@ -43,6 +43,7 @@
  To learn more about developing this project with Expo, look at the following resources:
 
  - [Expo Documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
+ - [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
 
 ## Problem Statement
 
@@ -55,8 +56,6 @@ Prior solutions which are actively used are people hanging out with each other w
 How can we allow people to encourage each other to study through shared productivity while not needing to be physically available to each other in a manner that is social, scalable, and asynchronous.
 
 We aim to solve this problem by creating a fun, interactive, asynchronous application that allows people to share when they are studying, encouraging their friends to join them and get some work done too.
-
- - [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
 
  ---
  Stay focused, stay accountable, and study smarter with **StudyBuddy**! 🚀📖
