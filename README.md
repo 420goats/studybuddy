@@ -57,5 +57,9 @@ How can we allow people to encourage each other to study through shared producti
 
 We aim to solve this problem by creating a fun, interactive, asynchronous application that allows people to share when they are studying, encouraging their friends to join them and get some work done too.
 
+## Other Resources
+
+- [Internal Shared Drive](https://drive.google.com/drive/folders/0AGdYuYFQqZ_1Uk9PVA) Repository of documents pertaining to project progression as submitted in various deliverables.
+
  ---
  Stay focused, stay accountable, and study smarter with **StudyBuddy**! 🚀📖
