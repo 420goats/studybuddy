@@ -47,3 +47,6 @@ metro-cache/
 *.p12
 *.key
 *.mobileprovision
+
+# Archive
+archive/
