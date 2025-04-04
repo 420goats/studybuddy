@@ -2,12 +2,12 @@ import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 
 const firebaseConfig = {
-  apiKey: process.env.FIREBASE_API_KEY!,
-  authDomain: process.env.FIREBASE_AUTH_DOMAIN!,
-  projectId: process.env.FIREBASE_PROJECT_ID!,
-  storageBucket: process.env.FIREBASE_STORAGE_BUCKET!,
-  messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID!,
-  appId: process.env.FIREBASE_APP_ID!,
+    apiKey: "AIzaSyAXe2iSjgASjtLqqUNZhJnNiR5hGk9tmpI",
+    authDomain: "studybuddy-8f3a1.firebaseapp.com",
+    projectId: "studybuddy-8f3a1",
+    storageBucket: "studybuddy-8f3a1.firebasestorage.app",
+    messagingSenderId: "978295916555",
+    appId: "1:978295916555:web:8bc013ac7903ce21d05f0e"
 };
 
 const app = initializeApp(firebaseConfig);

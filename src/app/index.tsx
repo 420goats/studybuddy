@@ -3,18 +3,8 @@ import { View, Text, StyleSheet, Image, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
 import AuthButton from '../components/AuthButton';
 
-// Hides the default header for a cleaner screen layout (not working ATM)
-export const options = {
-  headerShown: false,
-};
-
 export default function WelcomeScreen() {
   const router = useRouter();
-
-  // Will handle Google sign in once Firebase is implemented
-  const handleGoogleSignIn = () => {
-    // Note: Add Firebase functionality here
-  };
 
   return (
     <View style={styles.container}>
@@ -30,21 +20,11 @@ export default function WelcomeScreen() {
       <AuthButton title="Sign Up" onPress={() => router.push('/signup')} />
 
       {/* Navigate to login screen */}
-      <AuthButton title="Log In" onPress={() => router.push('/login')} />
-
-      {/* Divider and Google signup option (non-functional ATM) */}
-      <Text style={styles.divider}>──────── or continue with ────────</Text>
-
-      <Pressable onPress={handleGoogleSignIn}>
-        <Image
-          source={require('../assets/images/Google-Logo.png')}
-          style={styles.icon}
-        />
-      </Pressable>
+      <AuthButton title=" Log In " onPress={() => router.push('/login')} />
 
       {/* TOS and Privacy Policy */}
       <Text style={styles.termsText}>
-        By clicking continue, you agree to our{' '}
+        By continuing onward, you agree to our{' '}
         <Text style={styles.link}>Terms of Service</Text> and{' '}
         <Text style={styles.link}>Privacy Policy</Text>.
       </Text>

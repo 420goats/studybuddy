@@ -5,11 +5,6 @@ import AuthButton from '../components/AuthButton';
 import { useRouter } from 'expo-router';
 import { logIn } from '../firebase/authServices';
 
-// Hides the default header for a cleaner screen layout (not working ATM)
-export const options = {
-  headerShown: false,
-};
-
 export default function LoginScreen() {
   const router = useRouter();
   const [email, setEmail] = useState('');
