@@ -3,8 +3,8 @@ import { auth } from "./firebaseConfig";
 
 export const logIn = async (email: string, password: string) => {
   try {
-    await signInWithEmailAndPassword(auth, email, password);
-    return { success: true };
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    return { success: true, user: userCredential.user };
   } catch (error: any) {
     return { success: false, message: error.message };
   }

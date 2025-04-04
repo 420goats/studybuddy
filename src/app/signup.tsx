@@ -20,10 +20,8 @@ export default function SignUpScreen() {
     }
 
     const result = await signUp(email, password, name);
-
     if (result.success) {
-      Alert.alert('Success', 'Welcome, ${name}!');
-      router.replace('/home');
+      Alert.alert('Success', `Welcome, ${name}!`);
     } else {
       Alert.alert('Signup Failed', result.message || 'Something went wrong.');
     }

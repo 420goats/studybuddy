@@ -19,8 +19,7 @@ export default function LoginScreen() {
 
     const response = await logIn(email, password);
     if (response.success) {
-      Alert.alert("Welcome back!");
-      router.replace("/home"); // Navigate to home after successful login
+      Alert.alert(`Welcome back, ${response.user.displayName}!`);
     } else {
       Alert.alert("Login Failed", response.message);
     }
