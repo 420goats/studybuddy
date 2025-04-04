@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Alert } from 'react-native';
 import AuthInput from '../components/AuthInput';
 import AuthButton from '../components/AuthButton';
 import { useRouter } from 'expo-router';
+import { logIn } from '../firebase/authServices';
 
 // Hides the default header for a cleaner screen layout (not working ATM)
 export const options = {
@@ -14,19 +15,19 @@ export default function LoginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  // Handles login logic (placeholder ATM)
-  const handleLogin = () => {
+  // Handles login logic
+  const handleLogin = async () => {
     if (!email || !password) {
       Alert.alert('Error', 'Please enter both email and password.');
       return;
     }
 
-    // Simulated login
-    if (email === 'test@example.com' && password === 'password') {
-      Alert.alert('Welcome back!');
-      router.replace('/home'); // Navigate to home screen after login
+    const response = await logIn(email, password);
+    if (response.success) {
+      Alert.alert("Welcome back!");
+      router.replace("/home"); // Navigate to home after successful login
     } else {
-      Alert.alert('Login Failed', 'Invalid email or password.');
+      Alert.alert("Login Failed", response.message);
     }
   };
 

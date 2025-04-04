@@ -19,7 +19,7 @@ export default function WelcomeScreen() {
   return (
     <View style={styles.container}>
       {/* StudyBuddy logo */}
-      <Image source={require('../assets/StudyBuddy-Logo.png')} style={styles.logo} />
+      <Image source={require('../assets/images/StudyBuddy-Logo.png')} style={styles.logo} />
 
       {/* Introductory text for the app */}
       <Text style={styles.description}>
@@ -37,7 +37,7 @@ export default function WelcomeScreen() {
 
       <Pressable onPress={handleGoogleSignIn}>
         <Image
-          source={require('../assets/Google-Logo.png')}
+          source={require('../assets/images/Google-Logo.png')}
           style={styles.icon}
         />
       </Pressable>

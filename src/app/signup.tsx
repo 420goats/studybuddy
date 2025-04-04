@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Alert } from 'react-native';
 import AuthInput from '../components/AuthInput';
 import AuthButton from '../components/AuthButton';
 import { useRouter } from 'expo-router';
+import { signUp } from '../firebase/authServices';
 
 // Hides the default header for a cleaner screen layout (not working ATM)
 export const options = {
@@ -16,16 +17,21 @@ export default function SignUpScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  // Handles signup logic (placeholder ATM)
-  const handleSignUp = () => {
+  // Handles signup logic
+  const handleSignUp = async () => {
     if (!name || !email || !password) {
       Alert.alert('Error', 'Please fill out all fields.');
       return;
     }
 
-    // Simulated account creation
-    Alert.alert('Success', `Welcome, ${name}!`);
-    router.replace('/home'); // Navigate to main screen after signup
+    const result = await signUp(email, password, name);
+
+    if (result.success) {
+      Alert.alert('Success', 'Welcome, ${name}!');
+      router.replace('/home');
+    } else {
+      Alert.alert('Signup Failed', result.message || 'Something went wrong.');
+    }
   };
 
   return (
