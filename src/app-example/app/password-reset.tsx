@@ -61,3 +61,31 @@ if (!firebase.apps.length) {
         setMessage(null); // Clear any previous success message
       }
     };
+
+    return (
+        <div>
+          <h2>Reset Password</h2>
+          {/* Form for entering the email address */}
+          <form onSubmit={handleSubmit}>
+            <div>
+              <label htmlFor="email">Email Address:</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                value={email} // Set email value from state
+                onChange={(e) => setEmail(e.target.value)} // Update email state on change
+                required // Make the email field required
+              />
+            </div>
+            <button type="submit">Send Password Reset Email</button>
+          </form>
+    
+          {/* Conditionally render success or error messages */}
+          {message && <p style={{ color: 'green' }}>{message}</p>}
+          {error && <p style={{ color: 'red' }}>{error}</p>}
+        </div>
+      );
+    };
+    
+    export default ResetPasswordForm;
