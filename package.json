@@ -52,14 +52,11 @@
     "typescript": "^5.3.3"
   },
   "private": true,
-  
-  // package.json
-{
+
   "scripts": {
     "test": "jest --ci --forceExit --detectOpenHandles",
     "test:watch": "react-scripts test",
-    "build": "react-scripts build"  // Required for --if-present to work
+    "build": "react-scripts build" 
   }
-}
 }
 
