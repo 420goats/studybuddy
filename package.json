@@ -53,11 +53,13 @@
   },
   "private": true,
   
+  // package.json
+{
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "test": "jest --ci --forceExit --detectOpenHandles",
+    "test:watch": "react-scripts test",
+    "build": "react-scripts build"  // Required for --if-present to work
   }
+}
 }
 
