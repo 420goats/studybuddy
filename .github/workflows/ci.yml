@@ -7,7 +7,7 @@ on:
     branches: '*'  # Check PRs from any branch
 
 jobs:
-  test:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
