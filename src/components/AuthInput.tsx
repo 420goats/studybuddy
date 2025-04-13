@@ -1,18 +1,26 @@
 import React from 'react';
-import { TextInput, StyleSheet, TextInputProps, View } from 'react-native';
+import { TextInput, StyleSheet, TextInputProps, View, Text } from 'react-native';
 
 interface AuthInputProps extends TextInputProps {
   children?: React.ReactNode;
+  error?: string;
 }
 
-const AuthInput: React.FC<AuthInputProps> = ({ children, ...props }) => {
+const AuthInput: React.FC<AuthInputProps> = ({ children, error, ...props }) => {
   return (
     <View style={styles.inputWrapper}>
       <TextInput 
-      style={styles.input} 
-      placeholderTextColor="#555" //Adjust this to change placeholder text
-      {...props} />
+        style={styles.input} 
+        placeholderTextColor="#555" 
+        {...props} 
+      />
       {children && <View style={styles.showPassIcon}>{children}</View>}
+      
+      {error && (
+        <View style={styles.errorWrapper}>
+          <Text style={styles.errorText}>{error}</Text>
+        </View>
+      )}
     </View>
   );
 };
@@ -36,6 +44,14 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 15,
     top: 18, 
+  },
+  errorWrapper: {
+    marginTop: 4,
+  },
+  errorText: {
+    color: 'red',
+    fontSize: 13,
+    marginLeft: 5,
   },
 });
 

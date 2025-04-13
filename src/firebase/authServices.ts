@@ -27,9 +27,9 @@ export const signUp = async (
 
     await setDoc(doc(db, 'users', userCredential.user.uid), {
       createdAt: new Date(),
-      displayName,
-      email,
-      username
+      name: displayName,
+      email: email,
+      username: username
     });
 
     return { success: true, user: userCredential.user };
