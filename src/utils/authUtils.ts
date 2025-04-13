@@ -1,5 +1,7 @@
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from '../firebase/firebaseConfig';
+import { getAuth, sendPasswordResetEmail } from 'firebase/auth';
+import { auth } from '../firebase/firebaseConfig';
 
 // Function to check if email is already in use
 export const isEmailInUse = async (email: string): Promise<boolean> => {
@@ -53,4 +55,12 @@ export const handlePasswordChange = (
     if (!hasSpecialChar) errors.push('Password must contain at least one special character(@,$,!,%,*,?,&).');
   
     setPasswordErrors(errors); // Update password errors in real-time
+  };
+
+  export const resetPassword = async (email: string): Promise<void> => {
+    try {
+      await sendPasswordResetEmail(auth, email);
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
   };
