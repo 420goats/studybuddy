@@ -3,17 +3,24 @@
   "main": "expo-router/entry",
   "version": "1.0.0",
   "scripts": {
-    "start": "expo start",
-    "reset-project": "node ./scripts/reset-project.js",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
-    "web": "expo start --web",
     "test": "jest --watchAll",
-    "lint": "expo lint"
+    "test:ci": "jest --ci --runInBand"
   },
   "jest": {
-    "preset": "jest-expo"
+  "preset": "jest-expo",
+  "testEnvironment": "jsdom",
+  "transformIgnorePatterns": [
+    "node_modules/(?!((jest-)?react-native|@react-native(-community)?|expo(nent)?|@expo(nent)?/.*|react-native-svg))"
+  ],
+  "moduleNameMapper": {
+    "^@/(.*)$": "<rootDir>/src/$1",
+    "^expo-router$": "<rootDir>/__mocks__/expo-router.js"
   },
+  "setupFilesAfterEnv": [
+    "@testing-library/jest-native/extend-expect",
+    "<rootDir>/test-utils/jest.setup.js"
+  ]
+},
   "dependencies": {
     "@expo/vector-icons": "^14.0.2",
     "@react-navigation/bottom-tabs": "^7.2.0",
@@ -45,6 +52,8 @@
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
+    "@testing-library/jest-native": "^5.4.3",
+    "@testing-library/react-native": "^13.2.0",
     "@types/jest": "^29.5.12",
     "@types/lodash": "^4.17.16",
     "@types/react": "~18.3.12",
