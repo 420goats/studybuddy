@@ -3,21 +3,26 @@ import { View, Text, StyleSheet, Alert } from 'react-native';
 import AuthInput from '../components/AuthInput';
 import AuthButton from '../components/AuthButton';
 import { useRouter } from 'expo-router';
+import { resetPassword } from '../utils/authUtils';
 
 export default function ResetPasswordScreen() {
   const [email, setEmail] = useState('');
   const router = useRouter();
 
   // Handles password reset logic (placeholder ATM)
-  const handleReset = () => {
+  const handleReset = async () => {
     if (!email) {
       Alert.alert('Error', 'Please enter your email.');
       return;
     }
 
-    // Simulated password reset
-    Alert.alert('Check your email', 'We’ve sent a reset link if the account exists.');
-    router.back(); // Navigate back to the previous screen (login)
+    try {
+      await resetPassword(email);
+      Alert.alert('Check your email', 'We’ve sent a reset link if the account exists.');
+      router.back(); // Navigate back to the previous screen (login)
+    } catch (error: any) {
+      Alert.alert('Error', error.message || 'Something went wrong. Try again.');
+    }
   };
 
   return (
