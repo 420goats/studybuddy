@@ -7,7 +7,7 @@ interface AuthButtonProps extends TouchableOpacityProps {
 
 const AuthButton: React.FC<AuthButtonProps> = ({ title, ...props }) => {
   return (
-    <TouchableOpacity style={styles.button} {...props}>
+    <TouchableOpacity testID="auth-button" style={styles.button} {...props}>
       <Text style={styles.buttonText}>{title}</Text>
     </TouchableOpacity>
   );
@@ -26,5 +26,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 });
+
 
 export default AuthButton;
