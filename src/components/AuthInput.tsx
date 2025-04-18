@@ -10,7 +10,10 @@ const AuthInput: React.FC<AuthInputProps> = ({ children, error, ...props }) => {
   return (
     <View style={styles.inputWrapper}>
       <TextInput 
+<<<<<<< HEAD
         testID="auth-input"
+=======
+>>>>>>> c5d2080698172150f428392472847de13447fe53
         style={styles.input} 
         placeholderTextColor="#555" 
         {...props} 
@@ -19,7 +22,11 @@ const AuthInput: React.FC<AuthInputProps> = ({ children, error, ...props }) => {
       
       {error && (
         <View style={styles.errorWrapper}>
+<<<<<<< HEAD
           <Text testID="error-text" style={styles.errorText}>{error}</Text>
+=======
+          <Text style={styles.errorText}>{error}</Text>
+>>>>>>> c5d2080698172150f428392472847de13447fe53
         </View>
       )}
     </View>

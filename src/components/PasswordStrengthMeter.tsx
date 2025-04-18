@@ -37,7 +37,11 @@ const PasswordStrengthMeter: React.FC<Props> = ({ password }) => {
   const barWidthPercent = `${(score / 5) * 100}%`;
 
   return (
+<<<<<<< HEAD
     <View testID="strength-meter" style={{ marginBottom: 16 }}>
+=======
+    <View style={{ marginBottom: 16 }}>
+>>>>>>> c5d2080698172150f428392472847de13447fe53
       {/* Background bar */}
       <View
         style={{
@@ -50,7 +54,10 @@ const PasswordStrengthMeter: React.FC<Props> = ({ password }) => {
       >
         {/* Filled strength bar */}
         <View
+<<<<<<< HEAD
           testID="progress-bar"
+=======
+>>>>>>> c5d2080698172150f428392472847de13447fe53
           style={{
             height: '100%',
             width: barWidthPercent,
