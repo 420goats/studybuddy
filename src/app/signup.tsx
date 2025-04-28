@@ -101,6 +101,7 @@ export default function SignUpScreen() {
     if (result.success) {
       console.log('✅ Signup successful');
       Alert.alert('Success', `Welcome, ${name}!`);
+      router.replace('/login')
     } else {
       console.log('❌ Signup failed:', result.message);
       Alert.alert('Signup Failed', result.message || 'Something went wrong.');

@@ -4,6 +4,8 @@ import AuthInput from '../components/AuthInput';
 import AuthButton from '../components/AuthButton';
 import { useRouter } from 'expo-router';
 import { logIn } from '../firebase/authServices';
+import { Ionicons } from '@expo/vector-icons';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -19,7 +21,7 @@ export default function LoginScreen() {
 
     const response = await logIn(email, password);
     if (response.success) {
-      Alert.alert(`Welcome back, ${response.user.displayName}!`);
+      router.replace('/home');
     } else {
       Alert.alert("Login Failed", response.message);
     }
@@ -51,7 +53,7 @@ export default function LoginScreen() {
 
       {/* Links for users who need to sign up or reset password */}
       <Text style={styles.footerText}>
-        Don’t have an account?{' '}
+        Don't have an account?{' '}
         <Text style={styles.link} onPress={() => router.push('/signup')}>
           Sign Up
         </Text>
@@ -93,5 +95,5 @@ const styles = StyleSheet.create({
   link: {
     color: 'blue',
     textDecorationLine: 'underline',
-  },
+  }
 });
