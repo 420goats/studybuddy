@@ -1,5 +1,5 @@
-import React from 'react';
-import { TextInput, StyleSheet, TextInputProps, View, Text } from 'react-native';
+import React, { useRef } from 'react';
+import { TextInput, StyleSheet, TextInputProps, View, Text, Platform, TouchableWithoutFeedback } from 'react-native';
 
 interface AuthInputProps extends TextInputProps {
   children?: React.ReactNode;
@@ -7,21 +7,32 @@ interface AuthInputProps extends TextInputProps {
 }
 
 const AuthInput: React.FC<AuthInputProps> = ({ children, error, ...props }) => {
+  const inputRef = useRef<TextInput>(null);
+
+  const handlePress = () => {
+    if (Platform.OS === 'web' && inputRef.current) {
+      inputRef.current.focus();
+    }
+  };
+
   return (
-    <View style={styles.inputWrapper}>
-      <TextInput 
-        style={styles.input} 
-        placeholderTextColor="#555" 
-        {...props} 
-      />
-      {children && <View style={styles.showPassIcon}>{children}</View>}
-      
-      {error && (
-        <View style={styles.errorWrapper}>
-          <Text style={styles.errorText}>{error}</Text>
-        </View>
-      )}
-    </View>
+    <TouchableWithoutFeedback onPress={handlePress}>
+      <View style={styles.inputWrapper}>
+        <TextInput 
+          ref={inputRef}
+          style={styles.input} 
+          placeholderTextColor="#555" 
+          {...props}
+        />
+        {children && <View style={styles.showPassIcon}>{children}</View>}
+        
+        {error && (
+          <View style={styles.errorWrapper}>
+            <Text style={styles.errorText}>{error}</Text>
+          </View>
+        )}
+      </View>
+    </TouchableWithoutFeedback>
   );
 };
 

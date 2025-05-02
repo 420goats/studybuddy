@@ -1,9 +1,11 @@
 import React, { useEffect } from 'react';
-import { View, StyleSheet, Image, Pressable, Alert } from 'react-native';
+import { View, StyleSheet, Image, Pressable, Alert, Text } from 'react-native';
 import { useRouter } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { resetFirstTimeState, getFirstTimeState } from '../utils/storageUtils';
+
+const Logo = require('../assets/images/StudyBuddy-Logo.png');
 
 // Keep the splash screen visible while we fetch resources
 SplashScreen.preventAutoHideAsync();
@@ -54,11 +56,9 @@ export default function SplashScreenComponent() {
 
   return (
     <View style={styles.container}>
-      <Pressable onLongPress={handleLongPress}>
-        <Image 
-          source={require('../assets/images/StudyBuddy-Logo.png')} 
-          style={styles.logo}
-        />
+      <Pressable onLongPress={handleLongPress} style={styles.logoContainer}>
+        <Image source={Logo} style={styles.logo} />
+        <Text style={styles.text}>StudyBuddy</Text>
       </Pressable>
     </View>
   );
@@ -71,9 +71,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  logoContainer: {
+    alignItems: 'center',
+  },
   logo: {
     width: 200,
     height: 200,
     resizeMode: 'contain',
+  },
+  text: {
+    fontSize: 32,
+    fontFamily: 'Avenir Next',
+    fontWeight: '700',
+    marginTop: 20,
+    color: '#333',
+    letterSpacing: 1,
   },
 });
