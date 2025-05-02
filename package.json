@@ -7,20 +7,20 @@
     "test:ci": "jest --ci --runInBand"
   },
   "jest": {
-  "preset": "jest-expo",
-  "testEnvironment": "jsdom",
-  "transformIgnorePatterns": [
-    "node_modules/(?!((jest-)?react-native|@react-native(-community)?|expo(nent)?|@expo(nent)?/.*|react-native-svg))"
-  ],
-  "moduleNameMapper": {
-    "^@/(.*)$": "<rootDir>/src/$1",
-    "^expo-router$": "<rootDir>/__mocks__/expo-router.js"
+    "preset": "jest-expo",
+    "testEnvironment": "jsdom",
+    "transformIgnorePatterns": [
+      "node_modules/(?!((jest-)?react-native|@react-native(-community)?|expo(nent)?|@expo(nent)?/.*|react-native-svg))"
+    ],
+    "moduleNameMapper": {
+      "^@/(.*)$": "<rootDir>/src/$1",
+      "^expo-router$": "<rootDir>/__mocks__/expo-router.js"
+    },
+    "setupFilesAfterEnv": [
+      "@testing-library/jest-native/extend-expect",
+      "<rootDir>/test-utils/jest.setup.js"
+    ]
   },
-  "setupFilesAfterEnv": [
-    "@testing-library/jest-native/extend-expect",
-    "<rootDir>/test-utils/jest.setup.js"
-  ]
-},
   "dependencies": {
     "@expo/vector-icons": "^14.0.2",
     "@react-native-async-storage/async-storage": "^1.24.0",
@@ -35,6 +35,7 @@
     "expo-haptics": "~14.0.1",
     "expo-image-manipulator": "~13.0.6",
     "expo-linking": "~7.0.5",
+    "expo-media-library": "~17.0.6",
     "expo-router": "~4.0.17",
     "expo-splash-screen": "~0.29.22",
     "expo-status-bar": "~2.0.1",
@@ -53,8 +54,7 @@
     "react-native-screens": "~4.4.0",
     "react-native-vision-camera": "^4.6.4",
     "react-native-web": "~0.19.13",
-    "react-native-webview": "13.12.5",
-    "expo-media-library": "~17.0.6"
+    "react-native-webview": "13.12.5"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
