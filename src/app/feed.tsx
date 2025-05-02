@@ -33,7 +33,7 @@ export default function FeedScreen() {
     return (
       <View style={styles.container}>
         <View style={styles.center}>
-          <ActivityIndicator size="large" />
+          <ActivityIndicator size="large" testID="activity-indicator" />
         </View>
         <BottomNav currentRoute="/" />
       </View>
