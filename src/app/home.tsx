@@ -16,6 +16,13 @@ export default function HomeScreen() {
       >
         <Ionicons name="camera" size={30} color="white" />
       </TouchableOpacity>
+      
+      <TouchableOpacity 
+        style={styles.settingsButton}
+        onPress={() => router.push('/settings')}
+      >
+        <Ionicons name="settings-outline" size={24} color="#007AFF" />
+      </TouchableOpacity>
     </View>
   );
 }
@@ -42,5 +49,11 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
+  },
+  settingsButton: {
+    position: 'absolute',
+    top: 50,
+    right: 20,
+    padding: 10,
   },
 });
