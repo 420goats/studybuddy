@@ -1,29 +1,33 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, SafeAreaView, ActivityIndicator, Alert,  Image } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, ActivityIndicator, Alert, Image, Dimensions, TextInput, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard, ScrollView } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { useRouter } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
-import * as MediaLibrary from 'expo-media-library';
+import { Ionicons, Feather } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import BottomNav from '../components/BottomNav';
+import { auth } from '../firebase/firebaseConfig';
+import { db } from '../firebase/firebaseConfig';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
-type CaptureState = 'idle' | 'first_countdown' | 'first_capturing' | 'second_countdown' | 'second_capturing';
+type CaptureState = 'idle' | 'first_countdown' | 'first_capturing' | 'second_countdown' | 'second_capturing' | 'adding_caption';
 
-const PREVIEW_WIDTH = 150;
-const PREVIEW_HEIGHT = 200;
+const SCREEN_WIDTH = Dimensions.get('window').width;
+const CAMERA_PREVIEW_SIZE = SCREEN_WIDTH - 40; // 20px padding on each side
 const COUNTDOWN_SECONDS = 3;
 
 export default function CameraScreen() {
   const [permission, requestPermission] = useCameraPermissions();
-  const [mediaPermission, requestMediaPermission] = MediaLibrary.usePermissions();
   const [captureState, setCaptureState] = useState<CaptureState>('idle');
   const [countdown, setCountdown] = useState(COUNTDOWN_SECONDS);
   const [firstPhotoUri, setFirstPhotoUri] = useState<string | null>(null);
+  const [secondPhotoUri, setSecondPhotoUri] = useState<string | null>(null);
+  const [caption, setCaption] = useState('');
   const [cameraFacing, setCameraFacing] = useState<"front" | "back">("back");
   const router = useRouter();
   const cameraRef = useRef<CameraView>(null);
 
   useEffect(() => {
     requestPermission();
-    requestMediaPermission();
   }, []);
 
   useEffect(() => {
@@ -92,20 +96,51 @@ export default function CameraScreen() {
 
       if (!photo) throw new Error('Failed to capture second photo');
 
-      await Promise.all([
-        saveToGallery(firstPhotoUri),
-        saveToGallery(photo.uri)
-      ]);
-
-      Alert.alert(
-        'Success',
-        'Both photos have been saved to your gallery.',
-        [{ text: 'OK' }]
-      );
+      setSecondPhotoUri(photo.uri);
+      setCaptureState('adding_caption');
       
     } catch (error) {
       console.error('Error capturing/saving photos:', error);
       Alert.alert('Error', 'Failed to capture or save photos. Please try again.');
+      resetCaptureState();
+    }
+  }
+
+  async function savePost() {
+    if (!firstPhotoUri || !secondPhotoUri) {
+      Alert.alert('Error', 'Missing photos. Please try again.');
+      resetCaptureState();
+      return;
+    }
+
+    try {
+      const currentUser = auth.currentUser;
+      if (!currentUser) {
+        throw new Error('User not authenticated');
+      }
+
+      // Save the post data to Firebase
+      const postsRef = collection(db, 'posts');
+      const newPost = {
+        postImage: firstPhotoUri,
+        selfieImage: secondPhotoUri,
+        username: currentUser.displayName || 'Anonymous',
+        caption: caption.trim() || 'Study session',
+        timestamp: serverTimestamp(),
+        userId: currentUser.uid,
+        likedBy: []
+      };
+
+      await addDoc(postsRef, newPost);
+
+      Alert.alert(
+        'Success',
+        'Post created successfully!',
+        [{ text: 'OK', onPress: () => router.push('/feed') }]
+      );
+    } catch (error) {
+      console.error('Error saving post:', error);
+      Alert.alert('Error', 'Failed to save the post. Please try again.');
     } finally {
       resetCaptureState();
     }
@@ -113,42 +148,92 @@ export default function CameraScreen() {
 
   function resetCaptureState() {
     setFirstPhotoUri(null);
+    setSecondPhotoUri(null);
+    setCaption('');
     setCountdown(COUNTDOWN_SECONDS);
     setCaptureState('idle');
+    setCameraFacing('back');
   }
 
-  async function saveToGallery(uri: string) {
-    try {
-      const asset = await MediaLibrary.createAssetAsync(uri);
-      await MediaLibrary.createAlbumAsync('StudyBuddy', asset, false);
-      return true;
-    } catch (error) {
-      console.error('Error saving to gallery:', error);
-      return false;
-    }
-  }
-
-  if (!permission || !permission.granted || !mediaPermission?.granted) {
+  if (!permission?.granted) {
     return (
       <View style={styles.container}>
-        <Text style={{ textAlign: 'center' }}>Camera and media permissions are required</Text>
+        <Text style={styles.text}>Camera permission is required</Text>
         <TouchableOpacity 
           style={styles.iconButton} 
-          onPress={() => {
-            requestPermission();
-            requestMediaPermission();
-          }}
+          onPress={requestPermission}
         >
-          <Text style={styles.text}>Grant Permissions</Text>
+          <Text style={styles.text}>Grant Permission</Text>
         </TouchableOpacity>
+        <BottomNav currentRoute="/camera" />
       </View>
+    );
+  }
+
+  if (captureState === 'adding_caption') {
+    return (
+      <KeyboardAvoidingView 
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={styles.container}
+        keyboardVerticalOffset={Platform.OS === 'web' ? 0 : 0}
+      >
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <ScrollView 
+            style={styles.scrollView}
+            contentContainerStyle={styles.scrollContent}
+            keyboardShouldPersistTaps="handled"
+          >
+            <View style={styles.previewContainer}>
+              <View style={styles.photoPreview}>
+                <Image source={{ uri: firstPhotoUri! }} style={styles.previewImage} />
+                <Image 
+                  source={{ uri: secondPhotoUri! }} 
+                  style={[styles.previewImage, styles.selfiePreview]} 
+                />
+              </View>
+              
+              <View style={styles.captionContainer}>
+                <TextInput
+                  style={styles.captionInput}
+                  placeholder="Add a caption..."
+                  value={caption}
+                  onChangeText={setCaption}
+                  multiline
+                  maxLength={200}
+                  autoFocus
+                  returnKeyType="done"
+                  onSubmitEditing={Keyboard.dismiss}
+                  blurOnSubmit={false}
+                />
+              </View>
+
+              <View style={styles.buttonContainer}>
+                <TouchableOpacity 
+                  style={[styles.button, styles.cancelButton]} 
+                  onPress={resetCaptureState}
+                >
+                  <Text style={styles.buttonText}>Retake</Text>
+                </TouchableOpacity>
+                
+                <TouchableOpacity 
+                  style={[styles.button, styles.postButton]} 
+                  onPress={savePost}
+                >
+                  <Text style={[styles.buttonText, styles.postButtonText]}>Post</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </ScrollView>
+        </TouchableWithoutFeedback>
+        <BottomNav currentRoute="/camera" />
+      </KeyboardAvoidingView>
     );
   }
 
   const showCountdown = captureState === 'first_countdown' || captureState === 'second_countdown';
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <View style={styles.cameraContainer}>
         <CameraView 
           ref={cameraRef}
@@ -157,47 +242,26 @@ export default function CameraScreen() {
           active={true}
         >
           <View style={styles.overlay}>
-            <View style={styles.upperButtonContainer}>
-              <View style={{ flex: 1 }} />
-              <TouchableOpacity 
-                style={styles.flipButton} 
-                onPress={() => setCameraFacing(prev => prev === "back" ? "front" : "back")}
-              >
-                <Ionicons name="camera-reverse" size={24} color="white" />
-              </TouchableOpacity>
-              {showCountdown && (
-                <View style={[styles.countdownContainer, { marginLeft: 20 }]}>
-                  <Text style={styles.countdownText}>{countdown}</Text>
-                </View>
-              )}
-            </View>
-
-            <View style={styles.previewContainer}>
-              {firstPhotoUri ? (
-                <Image source={{ uri: firstPhotoUri }} style={styles.previewImage} />
-              ) : (
-                <View style={styles.previewOutline} />
-              )}
-            </View>
-
-            <View style={styles.bottomButtonContainer}>
-              {captureState === 'idle' ? (
-                <TouchableOpacity 
-                  style={styles.captureButton} 
-                  onPress={startPhotoSequence}
-                >
-                  <View style={styles.captureButtonInner} />
-                </TouchableOpacity>
-              ) : (
-                <View style={styles.loadingContainer}>
-                  <ActivityIndicator size="large" color="white" />
-                </View>
-              )}
-            </View>
+            {showCountdown && (
+              <View style={styles.countdownContainer}>
+                <Text style={styles.countdownText}>{countdown}</Text>
+              </View>
+            )}
           </View>
         </CameraView>
       </View>
-    </SafeAreaView>
+
+      <View style={styles.captureButtonContainer}>
+        <TouchableOpacity 
+          style={styles.captureButton} 
+          onPress={startPhotoSequence}
+        >
+          <View style={styles.captureButtonInner} />
+        </TouchableOpacity>
+      </View>
+
+      <BottomNav currentRoute="/camera" />
+    </View>
   );
 }
 
@@ -208,78 +272,24 @@ const styles = StyleSheet.create({
   },
   cameraContainer: {
     flex: 1,
-    marginHorizontal: 20,
-    marginVertical: 20,
-    borderRadius: 20,
-    overflow: 'hidden',
-    position: 'relative',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 20,
+    paddingTop: 20,
+    paddingBottom: 100, // Space for capture button and nav
   },
   mainCamera: {
-    flex: 1,
+    width: CAMERA_PREVIEW_SIZE,
+    height: CAMERA_PREVIEW_SIZE,
     borderRadius: 20,
-  },
-  overlay: {
-    flex: 1,
-    justifyContent: 'space-between',
-  },
-  upperButtonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    padding: 20,
-    zIndex: 3,
-  },
-  bottomButtonContainer: {
-    alignItems: 'center',
-    paddingBottom: 30,
-  },
-  buttonRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '100%',
-    paddingHorizontal: 30,
-    gap: 30,
-  },
-  flipButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  captureButton: {
-    width: 70,
-    height: 70,
-    borderRadius: 35,
-    backgroundColor: 'white',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  captureButtonInner: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: 'white',
-    borderWidth: 2,
+    overflow: 'hidden',
+    borderWidth: 3,
     borderColor: 'black',
   },
-  loadingContainer: {
-    width: 70,
-    height: 70,
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  iconButton: {
-    padding: 10,
-    borderRadius: 20,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-  },
-  text: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: 'white',
   },
   countdownContainer: {
     backgroundColor: 'rgba(0,0,0,0.5)',
@@ -295,29 +305,107 @@ const styles = StyleSheet.create({
     fontSize: 36,
     fontWeight: 'bold',
   },
-  previewContainer: {
+  captureButtonContainer: {
     position: 'absolute',
-    top: 10,
-    left: 10,
-    width: PREVIEW_WIDTH,
-    height: PREVIEW_HEIGHT,
-    overflow: 'hidden',
-    zIndex: 2,
-    borderRadius: 20,
+    bottom: 100, // Space for bottom nav
+    left: 0,
+    right: 0,
+    alignItems: 'center',
+    paddingBottom: 20,
   },
-  previewOutline: {
-    width: '100%',
-    height: '100%',
-    borderWidth: 2,
-    borderColor: 'white',
-    backgroundColor: 'rgba(255,255,255,0.1)',
+  captureButton: {
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    backgroundColor: 'white',
+    padding: 3,
+    borderWidth: 3,
+    borderColor: 'black',
+  },
+  captureButtonInner: {
+    flex: 1,
+    borderRadius: 35,
+    backgroundColor: 'black',
+  },
+  iconButton: {
+    padding: 10,
     borderRadius: 20,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
+  text: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: 'white',
+  },
+  previewContainer: {
+    flex: 1,
+    padding: 20,
+    paddingBottom: 100, // Space for bottom nav
+  },
+  photoPreview: {
+    width: '100%',
+    aspectRatio: 1,
+    borderRadius: 20,
+    borderWidth: 2,
+    borderColor: 'black',
+    overflow: 'hidden',
+    position: 'relative',
   },
   previewImage: {
     width: '100%',
     height: '100%',
+  },
+  selfiePreview: {
+    position: 'absolute',
+    top: 10,
+    left: 10,
+    width: 80,
+    height: 80,
+    borderRadius: 10,
     borderWidth: 2,
-    borderColor: 'white',
-    borderRadius: 20,
+    borderColor: 'black',
+  },
+  captionContainer: {
+    marginTop: 20,
+    backgroundColor: '#f8f8f8',
+    borderRadius: 10,
+    padding: 15,
+  },
+  captionInput: {
+    fontSize: 16,
+    minHeight: 40,
+    maxHeight: 100,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 20,
+  },
+  button: {
+    flex: 1,
+    padding: 15,
+    borderRadius: 10,
+    alignItems: 'center',
+    marginHorizontal: 5,
+  },
+  cancelButton: {
+    backgroundColor: '#f8f8f8',
+  },
+  postButton: {
+    backgroundColor: 'black',
+  },
+  buttonText: {
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  postButtonText: {
+    color: 'white',
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
+    paddingBottom: 120, // Extra padding for keyboard
   },
 });
